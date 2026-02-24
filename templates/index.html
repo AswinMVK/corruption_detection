@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corruption Risk Detection App</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        p { line-height: 1.6; }
+        a { display: inline-block; margin: 10px; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px; }
+        a:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Corruption Risk Detection App</h1>
+    <p>This application uses machine learning to analyze procurement data from Assam and detect potential corruption risks in tender processes. It employs an Isolation Forest model to identify anomalies based on contract amount, duration, number of bidders, buyer frequency, procurement method, and status.</p>
+    <p>The app provides two main functionalities:</p>
+    <ul>
+        <li><strong>Graphical Analysis:</strong> Visualize the distribution of risk scores and grades across the dataset, including cluster analysis.</li>
+        <li><strong>Threat Detection:</strong> Input details of a single tender record to assess its corruption risk.</li>
+        <li><strong>Dataset Records:</strong> View the processed dataset records.</li>
+    </ul>
+    <p>Navigate using the links below:</p>
+    <a href="/analysis">View Graphical Analysis</a>
+    <a href="/predict">Detect Risk for Single Record</a>
+    <a href="/records">View Dataset Records</a>
+</body>
+</html>

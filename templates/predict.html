@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threat Detection</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        form { max-width: 600px; }
+        label { display: block; margin: 10px 0 5px; }
+        input { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { padding: 10px 20px; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #d32f2f; }
+        .result { margin-top: 20px; padding: 20px; background-color: #f9f9f9; border-radius: 5px; }
+        .high { color: red; }
+        .medium { color: orange; }
+        .low { color: green; }
+        a { display: inline-block; margin: 10px; padding: 10px 20px; background-color: #2196F3; color: white; text-decoration: none; border-radius: 5px; }
+        a:hover { background-color: #0b7dda; }
+    </style>
+</head>
+<body>
+    <h1>Threat Detection for Single Tender Record</h1>
+    <p>Enter the details of a tender record to assess its corruption risk.</p>
+    <form method="post">
+        <label for="amount">Contract Amount:</label>
+        <input type="number" step="0.01" id="amount" name="amount" required>
+
+        <label for="duration_days">Tender Duration (days):</label>
+        <input type="number" step="0.01" id="duration_days" name="duration_days" required>
+
+        <label for="num_bidders">Number of Bidders:</label>
+        <input type="number" step="0.01" id="num_bidders" name="num_bidders" required>
+
+        <label for="buyer_frequency">Buyer Frequency:</label>
+        <input type="number" step="0.01" id="buyer_frequency" name="buyer_frequency" required>
+
+        <label for="proc_method_encoded">Procurement Method Code (0,1,2..):</label>
+        <input type="number" step="0.01" id="proc_method_encoded" name="proc_method_encoded" required>
+
+        <label for="status_encoded">Status Code (0,1,2..):</label>
+        <input type="number" step="0.01" id="status_encoded" name="status_encoded" required>
+
+        <button type="submit">Analyze Risk</button>
+    </form>
+
+    {% if submitted %}
+    <div class="result">
+        <h2>Risk Analysis Result</h2>
+        <p><strong>Risk Score:</strong> {{ risk_score }}</p>
+        <p><strong>Risk Grade:</strong> <span class="{% if risk_grade == 'High' %}high{% elif risk_grade == 'Medium' %}medium{% else %}low{% endif %}">{{ risk_grade }}</span></p>
+        <p><strong>Reasons:</strong></p>
+        <ul>
+            {% for reason in reasons %}
+            <li>{{ reason }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <a href="/">Back to Home</a>
+</body>
+</html>
