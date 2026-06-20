@@ -2,13 +2,22 @@ from flask import Flask, render_template, request
 import pandas as pd
 import numpy as np
 import joblib
-import matplotlib.pyplot as plt
+import subprocess
+import sys
 import os
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import MinMaxScaler
 
 # Load and preprocess data
-df = pd.read_csv("assam_procurement_cleaned.csv")
+# Use path relative to this file to avoid FileNotFoundError when running
+BASE_DIR = os.path.dirname(__file__)
+CSV_PATH = os.path.join(BASE_DIR, 'assam_procurement_cleaned.csv')
+df = pd.read_csv(CSV_PATH)
 
 # Rename columns
 df = df.rename(columns={
@@ -45,10 +54,28 @@ df['buyer_frequency'] = df['buyer'].map(buyer_count)
 df['proc_method_encoded'] = df['proc_method'].astype('category').cat.codes
 df['status_encoded'] = df['status'].astype('category').cat.codes
 
-# Load models
-model = joblib.load("risk_model.pkl")
-scaler = joblib.load("scaler.pkl")
-risk_scaler = joblib.load("risk_scaler.pkl")
+# Train models in-process to avoid unpickling incompatible binaries
+features = [
+    'amount',
+    'duration_days',
+    'num_bidders',
+    'buyer_frequency',
+    'proc_method_encoded',
+    'status_encoded'
+]
+
+X = df[features]
+
+# Fit scalers and model in-memory
+scaler = MinMaxScaler()
+X_scaled = scaler.fit_transform(X)
+
+model = IsolationForest(n_estimators=200, contamination=0.05, random_state=42)
+model.fit(X_scaled)
+
+risk_scaler = MinMaxScaler(feature_range=(0, 100))
+df['anomaly_score'] = model.decision_function(X_scaled)
+df['risk_score'] = risk_scaler.fit_transform(-df[['anomaly_score']])
 
 # Features list
 features = [
